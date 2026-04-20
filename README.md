@@ -54,8 +54,15 @@ Jede Aufgabe besitzt:
 ```text
 backend/
 frontend/
+docs/
 .github/workflows/
 ```
+
+## Dokumentation für die Abgabe
+
+- `docs/architecture.md` -> Architektur, Klassenmodell, Komponentendiagramm, Microservice-Konzept
+- `docs/rest-api.md` -> REST-Schnittstelle
+- `docs/requirements-coverage.md` -> Zuordnung der Umsetzung zur Aufgabenstellung
 
 ## Starten des Backends
 
