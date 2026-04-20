@@ -83,12 +83,13 @@ Die Zerlegung orientiert sich an einem klaren fachlichen Kontext. Die Aufgabenve
 - Spring Boot
 - Spring Web
 - Spring Data JPA
-- H2-Datenbank
+- PostgreSQL
 - Maven
 
 ### DevOps
 - GitHub
 - Docker
+- Docker Compose
 - GitHub Actions
 
 ## 6. Komponentendiagramm
@@ -96,9 +97,12 @@ Die Zerlegung orientiert sich an einem klaren fachlichen Kontext. Die Aufgabenve
 ```mermaid
 flowchart LR
     A[Web Frontend] --> B[REST API / task-service]
-    B --> C[(H2 Datenbank)]
+    B --> C[(PostgreSQL Datenbank)]
     D[GitHub Repository] --> E[GitHub Actions CI Pipeline]
     E --> F[Docker Image Build]
+    G[docker-compose.yml] --> C
+    G --> B
+    G --> A
 ```
 
 ## 7. REST-Kommunikation
@@ -107,9 +111,18 @@ Das Frontend kommuniziert über HTTP mit dem Microservice. Die REST-Schnittstell
 
 ## 8. Persistenz
 
-Die Daten werden dauerhaft in einer H2-Datenbank gespeichert. Damit ist die Anforderung eines persistenten Speichers erfüllt.
+Die Daten werden dauerhaft in einer PostgreSQL-Datenbank gespeichert. Damit ist die Anforderung eines persistenten Speichers erfüllt.
 
-## 9. Qualitätssicherung
+## 9. Container-Orchestrierung
+
+Die Gesamtanwendung kann über `docker compose up --build` mit einem Befehl gestartet werden. Die Startreihenfolge wird logisch über Health Checks abgesichert:
+- zuerst die Datenbank
+- danach das Backend
+- zuletzt das Frontend
+
+Das Backend wartet beim Container-Start auf einen erfolgreichen Health Check der Datenbank. Das Frontend wartet auf einen erfolgreichen Health Check des Backends.
+
+## 10. Qualitätssicherung
 
 Zur Qualitätssicherung wurden folgende Maßnahmen vorgesehen beziehungsweise umgesetzt:
 - strukturierte Schichtenarchitektur mit Controller, Service und Repository
@@ -117,8 +130,9 @@ Zur Qualitätssicherung wurden folgende Maßnahmen vorgesehen beziehungsweise um
 - automatisierte Integrationstests für zentrale CRUD-Funktionen
 - automatisierter Build- und Testlauf in GitHub Actions
 - containerisierte Ausführung mittels Docker
+- Health Checks für die containerisierte Gesamtanwendung
 
-## 10. Einordnung der CI/CD-Pipeline
+## 11. Einordnung der CI/CD-Pipeline
 
 Die Pipeline automatisiert bereits zentrale Continuous-Integration-Schritte:
 - Auschecken des Repositorys
