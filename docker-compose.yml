@@ -1,0 +1,18 @@
+services:
+  taskboard-backend:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    container_name: taskboard-backend
+    ports:
+      - "8080:8080"
+
+  taskboard-frontend:
+    image: nginx:alpine
+    container_name: taskboard-frontend
+    ports:
+      - "8081:80"
+    volumes:
+      - ./frontend:/usr/share/nginx/html:ro
+    depends_on:
+      - taskboard-backend
