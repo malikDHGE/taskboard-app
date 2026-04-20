@@ -1,11 +1,40 @@
 services:
+  taskboard-db:
+    image: postgres:16-alpine
+    container_name: taskboard-db
+    environment:
+      POSTGRES_DB: taskboarddb
+      POSTGRES_USER: taskboard
+      POSTGRES_PASSWORD: taskboard
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U taskboard -d taskboarddb"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+
   taskboard-backend:
     build:
-      context: .
-      dockerfile: backend/Dockerfile
+      context: ./backend
+      dockerfile: Dockerfile
     container_name: taskboard-backend
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://taskboard-db:5432/taskboarddb
+      SPRING_DATASOURCE_USERNAME: taskboard
+      SPRING_DATASOURCE_PASSWORD: taskboard
     ports:
       - "8080:8080"
+    depends_on:
+      taskboard-db:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8080/actuator/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 20s
 
   taskboard-frontend:
     image: nginx:alpine
@@ -15,4 +44,5 @@ services:
     volumes:
       - ./frontend:/usr/share/nginx/html:ro
     depends_on:
-      - taskboard-backend
+      taskboard-backend:
+        condition: service_healthy
