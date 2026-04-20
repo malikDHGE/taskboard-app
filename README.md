@@ -2,14 +2,6 @@
 
 Eine einfache CRUD-Webapplikation zur Verwaltung von Aufgaben im Rahmen eines DevOps-/Microservice-Projekts.
 
-## Überblick
-
-Die Anwendung besteht aus:
-- einem Frontend mit HTML, CSS und JavaScript
-- einem REST-basierten Microservice mit Spring Boot
-- einer persistenten Datenhaltung mit H2
-- einem Dockerfile für die Containerisierung
-- einer GitHub-Actions-Pipeline für Build, Test und Container-Build
 
 ## Fachliches Szenario
 
