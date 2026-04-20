@@ -1,8 +1,0 @@
-services:
-  taskboard-backend:
-    build:
-      context: ../..
-      dockerfile: infrastructure/docker/Dockerfile
-    container_name: taskboard-backend
-    ports:
-      - "8080:8080"
