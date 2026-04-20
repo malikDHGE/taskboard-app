@@ -7,7 +7,7 @@ Eine einfache CRUD-Webapplikation zur Verwaltung von Aufgaben im Rahmen eines De
 Die Anwendung besteht aus:
 - einem Frontend mit HTML, CSS und JavaScript
 - einem REST-basierten Microservice mit Spring Boot
-- einer persistenten Datenhaltung mit H2
+- einer persistenten Datenhaltung mit PostgreSQL
 - einer Containerisierung mit Docker
 - einer Startmöglichkeit der gesamten App über Docker Compose
 - einer GitHub-Actions-Pipeline für Build, Test und Container-Build
@@ -38,7 +38,7 @@ Jede Aufgabe besitzt:
 - Spring Boot
 - Spring Web
 - Spring Data JPA
-- H2 Database
+- PostgreSQL
 - Maven
 
 ### Frontend
@@ -69,24 +69,14 @@ docker-compose.yml
 
 ## Starten des Backends lokal
 
-```bash
-cd backend
-mvn spring-boot:run
-```
-
-Backend läuft dann unter:
-`http://localhost:8080`
-
-## Frontend lokal
-
-Die Datei `frontend/index.html` kann direkt im Browser geöffnet werden.
+Für die vollständige lokale Ausführung wird Docker Compose empfohlen, da dabei auch die Datenbank automatisch gestartet wird.
 
 ## Docker
 
 Docker-Image im Backend-Ordner bauen:
 
 ```bash
-docker build -f backend/Dockerfile -t taskboard-backend .
+docker build -f backend/Dockerfile -t taskboard-backend ./backend
 ```
 
 Container starten:
@@ -102,6 +92,15 @@ docker run -p 8080:8080 taskboard-backend
 ```bash
 docker compose up --build
 ```
+
+Die Container werden dabei in logischer Reihenfolge gestartet:
+1. PostgreSQL-Datenbank
+2. Backend-Microservice
+3. Frontend
+
+Die Reihenfolge wird über Health Checks und `depends_on` abgesichert:
+- das Backend wartet auf einen erfolgreichen Health Check der Datenbank
+- das Frontend wartet auf einen erfolgreichen Health Check des Backends
 
 Danach ist erreichbar:
 - Backend unter `http://localhost:8080`
@@ -125,5 +124,6 @@ Dieses Projekt erfüllt die Anforderungen an:
 - Microservice-Konzept
 - Dockerisierung
 - Start der Gesamtanwendung per Docker Compose
+- Health-Check-basierte Startreihenfolge
 - CI/CD-Grundlage
 - Versionsverwaltung mit GitHub
